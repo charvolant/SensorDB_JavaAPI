@@ -1,0 +1,12 @@
+{
+  "_id" : "529fc66884ae219229313b2a",
+  "name" : "name1",
+  "picture" : "http://localhost/picture1",
+  "website" : "http://localhost/website1",
+  "description" : "I am a description",
+  "created_at" : 1386202722077,
+  "updated_at" : 1386202722078,
+  "lat" : -38.75,
+  "lon" : 148.77,
+  "alt" : 100.0
+}

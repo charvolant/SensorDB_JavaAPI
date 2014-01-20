@@ -1,7 +1,5 @@
 package au.csiro.cmar.weru;
 
-import au.csiro.cmar.weru.SDBSession;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileReader;
@@ -20,37 +18,105 @@ import org.json.simple.parser.ParseException;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class SDBStream {
-	// Stream Identifier
-	String name;
-	String _id;
-	String nid;
-	String uid;
-	String mid;
-	String description;
-	String picture;
-	String website;
-	String token;
-	String metadata;
-	long created_at;
-	long updated_at;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-	public SDBStream(JSONObject json) {
-		name = json.get("name").toString();
-		_id = json.get("_id").toString();
-		nid = json.get("nid").toString();
-		uid = json.get("uid").toString();
-		mid = json.get("mid").toString();
-		description = json.get("description").toString();
-		picture = json.get("picture").toString();
-		website = json.get("website").toString();
-		token = json.get("token").toString();
-		// metadata = json.get("metadata").toString();
-		created_at = Long.parseLong(json.get("created_at").toString());
-		updated_at = Long.parseLong(json.get("updated_at").toString());
+public class SDBStream extends SDBObject {
+  /** The owning node */
+  @JsonIdentityReference(alwaysAsId = true)
+  @JsonProperty("nid")
+	private SDBNode node;
+  /** The owning user */
+  @JsonIdentityReference(alwaysAsId = true)
+  @JsonProperty("uid")
+	private SDBUser user;
+  /** The measurement type */
+  @JsonIdentityReference(alwaysAsId = true)
+  @JsonProperty("mid")
+	private SDBMeasurement measurement;
+	/** The token for accessing the stream */
+	@JsonProperty
+	private String token;
+
+	/**
+	 * Construct an empty stream.
+	 */
+	public SDBStream() {
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+   * Get the node.
+   *
+   * @return the node
+   */
+  public SDBNode getNode() {
+    return this.node;
+  }
+
+  /**
+   * Set the node.
+   *
+   * @param node the new node
+   */
+  public void setNode(SDBNode node) {
+    this.node = node;
+  }
+
+  /**
+   * Get the user.
+   *
+   * @return the user
+   */
+  public SDBUser getUser() {
+    return this.user;
+  }
+
+  /**
+   * Set the user.
+   *
+   * @param user the new user
+   */
+  public void setUser(SDBUser user) {
+    this.user = user;
+  }
+
+  /**
+   * Get the measurement.
+   *
+   * @return the measurement
+   */
+  public SDBMeasurement getMeasurement() {
+    return this.measurement;
+  }
+
+  /**
+   * Set the measurement.
+   *
+   * @param measurement the new measurement
+   */
+  public void setMeasurement(SDBMeasurement measurement) {
+    this.measurement = measurement;
+  }
+ 
+  /**
+   * Get the token.
+   *
+   * @return the token
+   */
+  public String getToken() {
+    return this.token;
+  }
+
+  /**
+   * Set the token.
+   *
+   * @param token the new token
+   */
+  public void setToken(String token) {
+    this.token = token;
+  }
+
+  @SuppressWarnings("unchecked")
 	public boolean postData(SDBSession session, String filename, int column)
 			throws IOException, ParseException, java.text.ParseException {
 
@@ -64,14 +130,14 @@ public class SDBStream {
 		while ((i * 60) < dataList.size()) {
 
 			
-			URL url = new URL(session.host + "/data");
+			URL url = new URL(session.getHost() + "/data");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setUseCaches(false);
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setRequestProperty("Accept", "application/json");
-			conn.setRequestProperty("Cookie", session.cookie);
+			conn.setRequestProperty("Cookie", session.getCookie());
 			
 			JSONObject data = new JSONObject();
 			Date dataDate;
@@ -117,14 +183,14 @@ public class SDBStream {
 			Calendar end_date, String agregation_level) throws IOException,
 			ParseException {
 		
-		URL url = new URL(session.host + "/data_download");
+		URL url = new URL(session.getHost() + "/data_download");
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("POST");
 		conn.setDoOutput(true);
 		conn.setUseCaches(false);
 		conn.setRequestProperty("Content-Type", "application/json");
 		conn.setRequestProperty("Accept", "application/json");
-		conn.setRequestProperty("Cookie", session.cookie);
+		conn.setRequestProperty("Cookie", session.getCookie());
 		
 		JSONObject obj = new JSONObject();
 
@@ -139,7 +205,7 @@ public class SDBStream {
 		if (end_date != null)
 			obj.put("ed", end_date.get(Calendar.YEAR) + "-" + formatValue(end_date.get(Calendar.MONTH)+1,2) + "-" + formatValue(end_date.get(Calendar.DATE),2));
 		
-		obj.put("sid", this._id);
+		obj.put("sid", this.getId());
 		
 		System.out.println(obj.toJSONString());
 		

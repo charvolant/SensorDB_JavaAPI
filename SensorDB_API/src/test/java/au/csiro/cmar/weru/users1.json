@@ -1,0 +1,9 @@
+[
+	{
+		"_id":"5253811484aed61d63cd18f4",
+		"name":"fieldprime_test",
+		"picture":"http://localhost/nowhere",
+		"website":"http://localhost/nowhere",
+		"description":"This is a test user designed to evaluate various functionalities of SensorDB."
+	}
+]
