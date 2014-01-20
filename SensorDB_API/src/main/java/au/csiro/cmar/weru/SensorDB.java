@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.json.simple.parser.ParseException;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SensorDB implements SDBContext {
@@ -131,7 +129,7 @@ public class SensorDB implements SDBContext {
     this.session.delete("/experiments?eid=" + experiment.getId(), this);
   }
 
-  public SDBExperiment getExperiment(String name) throws IOException, ParseException {
+  public SDBExperiment getExperiment(String name) {
     return this.experiments.get(name);
   }
 
