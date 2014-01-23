@@ -2,6 +2,8 @@ package au.csiro.cmar.weru;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,8 +84,27 @@ public class SensorDB implements SDBContext {
     this.users.remove(username);
   }
 
+  /**
+   * Get a user by name.
+   * 
+   * @param name The user name
+   * 
+   * @return The corresponding user or null for none
+   */
   public SDBUser getUser(String name) {
     return this.users.get(name);
+  }
+  
+  /**
+   * Get the users.
+   * <p>
+   * This returns all users.
+   * The session, returned by {#getSession()} contains the active user.
+   * 
+   * @return An unmodifiable collection of users.
+   */
+  public Collection<SDBUser> getUsers() {
+    return Collections.unmodifiableCollection(this.users.values());
   }
 
   // TO BE IMPLEMENTED IN SERVER
@@ -96,10 +117,40 @@ public class SensorDB implements SDBContext {
     throw new SDBException("Not yet implemented");
   }
 
+  /**
+   * Get a measurement by name.
+   * 
+   * @param name The measurement name
+   * 
+   * @return The measurement or null for none
+   */
   public SDBMeasurement getMeasurement(String name) {
     return this.measurements.get(name);
   }
+  
+  /**
+   * Get the measurements.
+   * 
+   * @return An unmodifiable collection of measurements.
+   */
+  public Collection<SDBMeasurement> getMeasurements() {
+    return Collections.unmodifiableCollection(this.measurements.values());
+  }
 
+  /**
+   * Create a new experiment
+   * 
+   * @param name The experiment name (must be unique)
+   * @param timezone The experiment timezone
+   * @param description A description of the experiment
+   * @param website The experiment website
+   * @param picture The experiment picture
+   * @param publicAaccess Set to 1 is this allows public access
+   * 
+   * @return The created experiment
+   * 
+   * @throws SDBException if unable to create the experiment
+   */
   public SDBExperiment createExperiment(String name, TimeZone timezone,
       String description, URI website, URI picture,
       int publicAaccess) throws SDBException {
@@ -129,8 +180,24 @@ public class SensorDB implements SDBContext {
     this.session.delete("/experiments?eid=" + experiment.getId(), this);
   }
 
+  /**
+   * Get an experiment by name.
+   * 
+   * @param name The experiment name
+   * 
+   * @return The experiment or null for not foudn
+   */
   public SDBExperiment getExperiment(String name) {
     return this.experiments.get(name);
+  }
+  
+  /**
+   * Get the experiments.
+   * 
+   * @return An unmodifiable collection of experiments.
+   */
+  public Collection<SDBExperiment> getExperiments() {
+    return Collections.unmodifiableCollection(this.experiments.values());
   }
 
   private void populateSensorDB(LoginResponse data) {
@@ -214,6 +281,10 @@ public class SensorDB implements SDBContext {
       this.name = name;
       this.password = password;
     }
+    
+    @SuppressWarnings("unused")
+    public Login() {
+    }
   }
 
   /**
@@ -228,6 +299,10 @@ public class SensorDB implements SDBContext {
     public List<SDBNode> nodes;
     @JsonProperty
     public List<SDBStream> streams;
+    
+    @SuppressWarnings("unused")
+    public LoginResponse() {
+    }
   }
 
   /**

@@ -5,6 +5,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -172,8 +174,24 @@ public class SDBExperiment extends SDBObject {
     }
   }
 
+  /**
+   * Find a node by name.
+   * 
+   * @param name The node name
+   * 
+   * @return 
+   */
   public SDBNode getNode(String name) {
     return this.nodes.get(name);
   }	
+  
+  /**
+   * Get the nodes.
+   * 
+   * @return An unmodifiable collection of nodes.
+   */
+  public Collection<SDBNode> getNodes() {
+    return Collections.unmodifiableCollection(this.nodes.values());
+  }
 
 }

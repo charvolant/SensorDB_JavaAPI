@@ -4,7 +4,7 @@
 		"name":"fieldprime_test",
 		"email":"fieldprime_test@mail.com",
 		"picture":"https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRkcAjySVhT9A1T21_9zoqVHt_fm5E-LE6spjbh_r8-3QALpA2buTpoKRf2",
-		"active": 1,
+		"active": true,
 		"website":"",
 		"description":"",
 		"created_at":1381204244205,

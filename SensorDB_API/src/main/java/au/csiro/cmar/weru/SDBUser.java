@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SDBUser extends SDBObject {
   /** Is this user currently active? */
+  @JsonProperty
 	private boolean active;
 	/** The password */
 	@JsonProperty
@@ -36,26 +37,6 @@ public class SDBUser extends SDBObject {
     this.active = active;
   }
 	
-  /**
-   * Get the active flag as an integer
-   * 
-   * @return 1 if active, 0 if inactive
-   */
-  @JsonProperty("active")
-  public int getActiveInt() {
-    return this.isActive() ? 1 : 0;
-  }
-  
-  /**
-   * Set the active flag from an integer.
-   * 
-   * @param active Non-zero for active, zero for inactive
-   */
-  @JsonProperty("active")
-  public void setActiveInt(int active) {
-    this.setActive(active != 0);
-  }
-
   /**
    * Get the password.
    *

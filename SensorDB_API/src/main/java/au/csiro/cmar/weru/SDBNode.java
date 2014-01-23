@@ -1,6 +1,8 @@
 package au.csiro.cmar.weru;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -226,4 +228,15 @@ public class SDBNode extends SDBObject {
   public SDBStream getStream(String name) {
     return this.streams.get(name);
   }
+  
+  
+  /**
+   * Get the streams.
+   * 
+   * @return An unmodifiable collection of streams.
+   */
+  public Collection<SDBStream> getStreams() {
+    return Collections.unmodifiableCollection(this.streams.values());
+  }
+
 }

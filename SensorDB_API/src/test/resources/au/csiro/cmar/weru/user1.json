@@ -4,5 +4,5 @@
   "picture" : "http://localhost/picture1",
   "website" : "http://localhost/website1",
   "description" : "I am a description",
-  "active" : 1
+  "active" : true
 }
