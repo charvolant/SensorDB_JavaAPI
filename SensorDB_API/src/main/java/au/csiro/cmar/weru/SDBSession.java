@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class SDBSession {
   /** The base host for server access */
 	private String host;
@@ -92,9 +94,9 @@ public class SDBSession {
    * 
    * @throws SDBException if unable to perform the post correctly
    */
-  public <T extends JSONSerialisable> T post(String path, JSONSerialisable request, Class<T> responseClass, SDBContext context) throws SDBException {
+  public <T extends JSONSerialisable> T post(String path, Object request, Class<T> responseClass, SDBContext context) throws SDBException {
     InputStream is = null;
-    String content = request == null ? "" : request.toJson();
+    String content = request == null ? "" : JSONSerialisable.toJson(request);
     T response = null;
     HttpURLConnection conn = null;
     
@@ -120,6 +122,59 @@ public class SDBSession {
         return null;
       is = conn.getInputStream();
       response = JSONSerialisable.load(is, responseClass, context);
+      return response;
+    } catch (IOException| URISyntaxException ex) {
+      throw new SDBException("Unable to access " + path + " with content " + request, ex);
+    } finally {
+      if (is != null)
+        try {
+          is.close();
+        } catch (IOException ex) {
+          // Just give up!
+        }      
+    }
+  }
+  
+  
+  /**
+   * Perform a post to the server and get a JSON tree in response.
+   * <p>
+   * Any cookies returned become the session cookie.
+   * 
+   * @param path The relative path from the host (should begin with a /)
+   * @param request The object to post
+   * @param context The context for response parsing
+   * 
+   * @return The resulting response from the server as a JSON tree or null for no response
+   * 
+   * @throws SDBException if unable to perform the post correctly
+   */
+  public JsonNode postTree(String path, Object request, SDBContext context) throws SDBException {
+    InputStream is = null;
+    String content = request == null ? "" : JSONSerialisable.toJson(request);
+    JsonNode response = null;
+    HttpURLConnection conn = null;
+    
+    try {
+      URL url = new URL(this.host + path);
+      conn = (HttpURLConnection) url.openConnection();
+      
+      conn.setRequestMethod("POST");
+      conn.setDoOutput(true);
+      conn.setUseCaches(false);
+      conn.setRequestProperty("Content-Type", "application/json");
+      conn.setRequestProperty("Accept", "application/json");
+      if (this.cookie != null)
+        conn.setRequestProperty("Cookie", this.cookie);
+      conn.setRequestProperty("Content-Length", Integer.toString(content.length()));
+      conn.getOutputStream().write(content.getBytes());
+      conn.getOutputStream().flush();
+      if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
+        throw new SDBException("POST method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage());
+      if (conn.getHeaderField("Set-Cookie") != null)
+        this.cookie = conn.getHeaderField("Set-Cookie");
+      is = conn.getInputStream();
+      response = JSONSerialisable.loadTree(is, context);
       return response;
     } catch (IOException| URISyntaxException ex) {
       throw new SDBException("Unable to access " + path + " with content " + request, ex);

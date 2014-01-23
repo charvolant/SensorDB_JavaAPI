@@ -18,10 +18,14 @@ import java.util.List;
 
 import au.csiro.cmar.weru.json.SDBDeserializationContext;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
@@ -33,6 +37,7 @@ import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
  * @copyright 2012 CSIRO
  *
  */
+@JsonAutoDetect(creatorVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
 public abstract class JSONSerialisable {
 
   /**
@@ -114,6 +119,26 @@ public abstract class JSONSerialisable {
     return mapper.readValue(stream, mapper.getTypeFactory().constructCollectionType(List.class, clazz));
   }
 
+  /**
+   * Load an parsed tree from a JSON object.
+   * 
+   * @param stream The input stream
+   * @param context The sensordb context, if any
+   * 
+   * @return The loaded object
+   * 
+   * @throws IOException If unable to read or parse the configuration
+   */
+  public static JsonNode loadTree(InputStream stream, SDBContext context) throws IOException, URISyntaxException {
+    SDBDeserializationContext dc = new SDBDeserializationContext(BeanDeserializerFactory.instance, null, context);
+    ObjectMapper mapper = new ObjectMapper(null, null, dc);
+    InjectableValues.Std inject = new InjectableValues.Std();
+    
+    inject.addValue("context", context);
+    mapper.setInjectableValues(inject);
+    return mapper.readTree(stream);
+  }
+
 
   /**
    * Load an JSON object of a specific class from a URL.
@@ -154,6 +179,23 @@ public abstract class JSONSerialisable {
     mapper.setSerializationInclusion(Include.NON_DEFAULT);
     mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
     mapper.writeValue(writer, object);    
+  }
+  
+  /**
+   * Convert this object into a JSON string.
+   * 
+   * @return The JSON string for this object
+   */
+  public static String toJson(Object object) {
+    StringWriter writer = new StringWriter(128);
+    
+    try {
+      saveObject(object, writer);
+      return writer.toString();
+    } catch (Exception ex) {
+      return "Invalid object: " + ex.getMessage();
+    }
+    
   }
 
 }

@@ -199,6 +199,39 @@ abstract public class SDBObject extends JSONSerialisable {
   public void setMetadata(List<Metadata> metadata) {
     this.metadata = metadata;
   }
+  
+  /**
+   * Find a named metadata entry.
+   * 
+   * @param name The name
+   * 
+   * @return The metadata entry or null for not found
+   */
+  public Metadata getMetadata(String name) {
+    for (Metadata metadata: this.metadata)
+      if (name.equals(metadata.getName()))
+        return metadata;
+    return null;
+  }
+  
+  /**
+   * Add a named metadata entry.
+   * <p>
+   * If there is an existing medatadata entry for this
+   * value, then it replaces the 
+   * 
+   * @param name The name
+   * @param value The value
+   */
+  public void addMetadata(String name, String value) {
+    Metadata metadata = this.getMetadata(name);
+    
+    if (metadata == null) {
+      metadata = new Metadata(name, value);
+      this.metadata.add(metadata);
+    } else
+      metadata.setValue(value);
+  }
 
   /**
    * Get the date the object was created on.

@@ -1,8 +1,8 @@
 {
   "_id" : "5253811484aed61d63cd18f4",
-  "active" : 1,
   "name" : "name1",
   "picture" : "http://localhost/picture1",
   "website" : "http://localhost/website1",
-  "description" : "I am a description"
+  "description" : "I am a description",
+  "active" : 1
 }

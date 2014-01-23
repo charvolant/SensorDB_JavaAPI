@@ -8,7 +8,7 @@ It is intended to act as a jar that can be imported by other projects.
 
 The project uses maven. To install it in your maven repository, use
 
-mvn install
+    mvn install
 
 It can then be accessed by other projects.
 
@@ -34,8 +34,8 @@ When constructed, the SensorDB object will login to the server and download the 
 experiments, user definitions and measurement definitions. These can
 be accessed by name, via
 
-  SensorDB.getExperiment
-      SDBExperiment.getNode
-        SDBNode.getStream
-          SDBStream
+    SensorDB.getExperiment
+        SDBExperiment.getNode
+          SDBNode.getStream
+            SDBStream
     

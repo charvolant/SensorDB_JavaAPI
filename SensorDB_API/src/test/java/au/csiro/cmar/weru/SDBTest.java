@@ -105,5 +105,19 @@ public class SDBTest {
             .withBody("{}")
             )
         );
+    stubFor(post(urlEqualTo("/data"))
+        .withHeader("Cookie", equalTo(this.COOKIE))
+        .willReturn(aResponse()
+            .withStatus(200)
+            .withBody("{}")
+            )
+        );
+    stubFor(post(urlEqualTo("/data_download"))
+        .withHeader("Cookie", equalTo(this.COOKIE))
+        .willReturn(aResponse()
+            .withStatus(200)
+            .withBody(this.loadResource("data1.json"))
+            )
+        );
   }
 }
