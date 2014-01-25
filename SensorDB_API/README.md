@@ -26,9 +26,9 @@ To include the API in your maven project, use
 
 ### API
 
-The main accessor is SensorDB, which can be initialised by constructing
+The main accessor is SensorDB, which can be created via a factory instance
 
-    SensorDB sdb = new SensorDB("http://sensordb.host.com:9903", "username", "password");
+    SensorDB sdb = SensorDBFactory.instance().create("http://sensordb.host.com:9903", "username", "password");
 
 When constructed, the SensorDB object will login to the server and download the user's
 experiments, user definitions and measurement definitions. These can

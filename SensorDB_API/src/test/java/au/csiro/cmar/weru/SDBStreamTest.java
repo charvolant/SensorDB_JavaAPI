@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
+import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -129,7 +130,7 @@ public class SDBStreamTest extends SDBTest {
     Timeseries timeseries;
     Iterator<Observation> i;
     Observation o;
-    SDBSession session = new SDBSession("http://localhost:" + this.PORT);
+    SDBSession session = new SDBSession(new URL("http://localhost:" + this.PORT));
 
     this.createServer();
     session.setCookie(this.COOKIE);
@@ -159,7 +160,7 @@ public class SDBStreamTest extends SDBTest {
     Timeseries timeseries;
     Iterator<Observation> i;
     Observation o;
-    SDBSession session = new SDBSession("http://localhost:" + this.PORT);
+    SDBSession session = new SDBSession(new URL("http://localhost:" + this.PORT));
 
     this.createServer();
     session.setCookie(this.COOKIE);
@@ -185,7 +186,7 @@ public class SDBStreamTest extends SDBTest {
     Timeseries timeseries;
     Iterator<Observation> i;
     Observation o;
-    SDBSession session = new SDBSession("http://localhost:" + this.PORT);
+    SDBSession session = new SDBSession(new URL("http://localhost:" + this.PORT));
 
     this.createServer();
     session.setCookie(this.COOKIE);
@@ -209,7 +210,7 @@ public class SDBStreamTest extends SDBTest {
   public void testPostData1() throws Exception {
     SDBStream stream = SDBStream.load(this.getClass().getResource("stream1.json"), SDBStream.class, this.context);
     Timeseries timeseries = new Timeseries();
-    SDBSession session = new SDBSession("http://localhost:" + this.PORT);
+    SDBSession session = new SDBSession(new URL("http://localhost:" + this.PORT));
     int count;
     
     this.createServer();

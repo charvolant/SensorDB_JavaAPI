@@ -1,0 +1,9 @@
+{
+  "timeseries" : [ {
+    "timestamp" : 123456789000,
+    "value" : 10.5
+  }, {
+    "timestamp" : 123456799000,
+    "value" : -28.66557
+  } ]
+}

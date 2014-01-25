@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.deser.DefaultDeserializationContext;
 import com.fasterxml.jackson.databind.deser.DeserializerCache;
 import com.fasterxml.jackson.databind.deser.DeserializerFactory;
-import com.fasterxml.jackson.databind.deser.impl.PropertyBasedObjectIdGenerator;
 import com.fasterxml.jackson.databind.deser.impl.ReadableObjectId;
 
 /**
@@ -30,6 +29,8 @@ import com.fasterxml.jackson.databind.deser.impl.ReadableObjectId;
  *
  */
 public class SDBDeserializationContext extends DefaultDeserializationContext {
+  private static final long serialVersionUID = -402085877449807767L;
+
   /** The sensordb context */
   private SDBContext context;
   

@@ -35,6 +35,7 @@ public class SDBTest {
   protected static final String EXPERIMENT1 = "Test1";
   protected static final String MEASUREMENT1 = "Celsius";
   protected static final String USER1 = "fieldprime_test";
+  protected static final String PASSWORD1 = "fieldprime_test";
   protected static final String WEBSITE1 = "http://localhost/nowhere";
   protected static final String WEBSITE2 = "http://en.wikipedia.org/wiki/Celsius";
 

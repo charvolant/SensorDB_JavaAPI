@@ -1,7 +1,7 @@
 package au.csiro.cmar.weru;
 
-import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,16 +12,25 @@ import java.util.TimeZone;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SensorDB implements SDBContext {
+  /** The active session */
+  private SDBSession session;
+  /** The available measurements */
+  private Map<String, SDBMeasurement> measurements;
+  /** The available users */
+  private Map<String, SDBUser> users;
+  /** The session experiment map */
+  private Map<String, SDBExperiment> experiments;
+  /** Objects by identifier */
+  private Map<Object, SDBObject> objectsById;
 
-  public SDBSession session;
-  public Map<String, SDBMeasurement> measurements;
-  public Map<String, SDBUser> users;
-  public Map<String, SDBExperiment> experiments;
-  public Map<Object, SDBObject> objectsById;
-
-  // Minimal constructor for SensorDB
-  // Just can access public services as getMeasurements() and getUsers()
-  public SensorDB(String host) throws SDBException {
+  /**
+   * Construct a SensorDB connection that can access user and measurement lists.
+   * 
+   * @param host The sensordb host
+   * 
+   * @throws SDBException if able to access the server
+   */
+  protected SensorDB(URL host) throws SDBException {
     this.session = new SDBSession(host);
     this.users = new HashMap<String, SDBUser>(); 
     this.measurements = new HashMap<String, SDBMeasurement>(); 
@@ -31,7 +40,17 @@ public class SensorDB implements SDBContext {
     this.retrieveMeasurements();
   }
 
-  public SensorDB(String host, String user, String password)
+  /**
+   * Construct a SensorDB connection for a specific user.
+   * <p>
+   * The list of experiments/nodes/streams is collected for the user.
+   * 
+   * @param host The host URL
+   * @param user The user name
+   * @param password The password
+   * @throws SDBException
+   */
+  protected SensorDB(URL host, String user, String password)
       throws SDBException {
     this.session = new SDBSession(host);
     this.users = new HashMap<String, SDBUser>(); 

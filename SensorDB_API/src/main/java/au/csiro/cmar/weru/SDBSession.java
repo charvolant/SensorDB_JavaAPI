@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class SDBSession {
   /** The base host for server access */
-	private String host;
+	private URL host;
 	/** The current user */
 	private SDBUser user;
 	/** The session cookie */
@@ -21,7 +21,7 @@ public class SDBSession {
    * Construct a session for a specific host.
    * @param host
    */
-  public SDBSession(String host) {
+  public SDBSession(URL host) {
     super();
     this.host = host;
   }
@@ -31,7 +31,7 @@ public class SDBSession {
    *
    * @return the host
    */
-  public String getHost() {
+  public URL getHost() {
     return this.host;
   }
 
@@ -40,7 +40,7 @@ public class SDBSession {
    *
    * @param host the new host
    */
-  public void setHost(String host) {
+  public void setHost(URL host) {
     this.host = host;
   }
 
@@ -101,7 +101,7 @@ public class SDBSession {
     HttpURLConnection conn = null;
     
     try {
-      URL url = new URL(this.host + path);
+      URL url = new URL(this.host, path);
       conn = (HttpURLConnection) url.openConnection();
       
       conn.setRequestMethod("POST");
@@ -156,7 +156,7 @@ public class SDBSession {
     HttpURLConnection conn = null;
     
     try {
-      URL url = new URL(this.host + path);
+      URL url = new URL(this.host, path);
       conn = (HttpURLConnection) url.openConnection();
       
       conn.setRequestMethod("POST");
@@ -207,7 +207,7 @@ public class SDBSession {
     HttpURLConnection conn = null;
     
     try {
-      URL url = new URL(this.host + path);
+      URL url = new URL(this.host, path);
       conn = (HttpURLConnection) url.openConnection();
       
       conn.setRequestMethod("GET");
@@ -260,7 +260,7 @@ public class SDBSession {
     HttpURLConnection conn = null;
     
     try {
-      URL url = new URL(this.host + path);
+      URL url = new URL(this.host, path);
       conn = (HttpURLConnection) url.openConnection();
       
       conn.setRequestMethod("GET");
@@ -308,7 +308,7 @@ public class SDBSession {
     HttpURLConnection conn = null;
     
     try {
-      URL url = new URL(this.host + path);
+      URL url = new URL(this.host, path);
       conn = (HttpURLConnection) url.openConnection();
       
       conn.setRequestMethod("DELETE");
