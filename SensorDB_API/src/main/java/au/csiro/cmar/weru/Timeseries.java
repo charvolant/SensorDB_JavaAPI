@@ -63,6 +63,8 @@ public class Timeseries extends JSONSerialisable implements Iterable<Observation
    * @param timestampColumn The column (counting from 0) that holds the timestamp
    * @param valueColumn The column (counting from 0) that holds the value
    * @param headers The number of header lines
+   * 
+   * @see #Timeseries(Reader, int, int, int)
    */
   public Timeseries(File source, int timestampColumn, int valueColumn, int headers) throws SDBException {
     try {
@@ -78,8 +80,8 @@ public class Timeseries extends JSONSerialisable implements Iterable<Observation
   /**
    * Construct a timeseries from a CSV stream.
    * <p>
-   * Timestamps can either be in ISO8601 format or milliseconds
-   * since 1970-01-01T00:00:00 format.
+   * Timestamps can either be in ISO8601 yyyy-mm-ddThh:mm:ssTZ format 
+   * or milliseconds since 1970-01-01T00:00:00 format.
    * 
    * @param reader The source reader
    * @param timestampColumn The column that holds the timestamp
