@@ -9,6 +9,7 @@ package au.csiro.cmar.weru;
 
 import static org.junit.Assert.*;
 
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -36,7 +37,7 @@ public class TimeseriesTest extends SDBTest {
   @Before
   public void setUp() throws Exception {
   }
-  
+ 
   /**
    * Test method for {@link au.csiro.cmar.weru.SBDUser#toJson()}.
    */
@@ -178,11 +179,124 @@ public class TimeseriesTest extends SDBTest {
   }
 
   /**
+   * Test method for {@link au.csiro.cmar.weru.Timeseries#size()}.
+   */
+  @Test
+  public void testSize1() {
+    Timeseries timeseries = new Timeseries();
+    
+    timeseries.add(new Observation(this.TIMESTAMP1, this.VALUE1));
+    timeseries.add(new Observation(this.TIMESTAMP2, this.VALUE2));
+    timeseries.add(new Observation(this.TIMESTAMP3, this.VALUE3));
+    assertEquals(3, timeseries.size());
+  }
+
+  /**
+   * Test method for {@link au.csiro.cmar.weru.Timeseries#size()}.
+   */
+  @Test
+  public void testSize2() {
+    Timeseries timeseries = new Timeseries();
+    
+    timeseries.add(new Observation(this.TIMESTAMP1, this.VALUE1));
+    timeseries.add(new Observation(this.TIMESTAMP2, this.VALUE2));
+    timeseries.add(new Observation(this.TIMESTAMP1, this.VALUE3));
+    assertEquals(2, timeseries.size());
+  }
+
+  /**
+   * Test method for {@link au.csiro.cmar.weru.Timeseries#size()}.
+   */
+  @Test
+  public void testGet1() {
+    Timeseries timeseries = new Timeseries();
+    Observation o1, o2, o3;
+    
+    o1 = new Observation(this.TIMESTAMP1, this.VALUE1);
+    o2 = new Observation(this.TIMESTAMP2, this.VALUE2);
+    o3 = new Observation(this.TIMESTAMP3, this.VALUE3);
+    timeseries.add(o1);
+    timeseries.add(o2);
+    timeseries.add(o3);
+    assertSame(o1, timeseries.get(this.TIMESTAMP1));
+    assertSame(o2, timeseries.get(this.TIMESTAMP2));
+    assertSame(o3, timeseries.get(this.TIMESTAMP3));
+  }
+
+  /**
+   * Test method for {@link au.csiro.cmar.weru.Timeseries#size()}.
+   */
+  @Test
+  public void testGet2() {
+    Timeseries timeseries = new Timeseries();
+    Observation o1, o2, o3;
+    
+    o1 = new Observation(this.TIMESTAMP1, this.VALUE1);
+    o2 = new Observation(this.TIMESTAMP2, this.VALUE2);
+    o3 = new Observation(this.TIMESTAMP1, this.VALUE3);
+    timeseries.add(o1);
+    timeseries.add(o2);
+    timeseries.add(o3);
+    assertSame(o3, timeseries.get(this.TIMESTAMP1));
+    assertSame(o2, timeseries.get(this.TIMESTAMP2));
+  }
+
+  /**
    * Test method for {@link au.csiro.cmar.weru.Timeseries#iterator()}.
    */
   @Test
   public void testIterator() {
     // Tested by other methods
+  }
+
+  /**
+   * Test method for {@link au.csiro.cmar.weru.Timeseries#Timeseries(java.io.Reader, int, int, int)}.
+   */
+  @Test
+  public void testTimeseries1() throws Exception {
+    Timeseries timeseries = new Timeseries(new InputStreamReader(this.getClass().getResourceAsStream("data1.csv")), 0, 2, 1);
+    Iterator<Observation> i;
+    Observation o;
+    
+    i = timeseries.iterator();
+    assertTrue(i.hasNext());
+    o = i.next();
+    assertEquals(this.TIMESTAMP1, o.getTimestamp());
+    assertEquals(this.VALUE1, o.getValue(), 0.0000001);
+    assertTrue(i.hasNext());
+    o = i.next();
+    assertEquals(this.TIMESTAMP3, o.getTimestamp());
+    assertEquals(this.VALUE3, o.getValue(), 0.0000001);
+    assertTrue(i.hasNext());
+    o = i.next();
+    assertEquals(this.TIMESTAMP2, o.getTimestamp());
+    assertEquals(this.VALUE2, o.getValue(), 0.0000001);
+    assertFalse(i.hasNext());
+  }
+
+  /**
+   * Test method for {@link au.csiro.cmar.weru.Timeseries#Timeseries(java.io.Reader, int, int, int)}.
+   */
+  @Test
+  public void testTimeseries2() throws Exception {
+    Timeseries timeseries = new Timeseries(new InputStreamReader(this.getClass().getResourceAsStream("data2.csv")), 0, 2, 1);
+    Iterator<Observation> i;
+    Observation o;
+    
+    i = timeseries.iterator();
+    assertTrue(i.hasNext());
+    o = i.next();
+    assertEquals(this.TIMESTAMP1, o.getTimestamp());
+    assertEquals(this.VALUE1, o.getValue(), 0.0000001);
+    assertTrue(i.hasNext());
+    o = i.next();
+    assertEquals(this.TIMESTAMP3, o.getTimestamp());
+    assertEquals(this.VALUE3, o.getValue(), 0.0000001);
+    assertTrue(i.hasNext());
+    o = i.next();
+    assertEquals(this.TIMESTAMP2, o.getTimestamp());
+    assertEquals(this.VALUE2, o.getValue(), 0.0000001);
+    assertFalse(i.hasNext());
   }
 
 }

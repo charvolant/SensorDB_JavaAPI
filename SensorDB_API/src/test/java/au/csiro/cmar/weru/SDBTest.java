@@ -31,6 +31,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
  */
 public class SDBTest {
   protected static final int PORT = 8909;
+  protected static final String HOST1 = "http://localhost:" + PORT;
   protected static final String COOKIE = "LovelyCookie";
   protected static final String EXPERIMENT1 = "Test1";
   protected static final String MEASUREMENT1 = "Celsius";

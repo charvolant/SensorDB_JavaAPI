@@ -1,10 +1,6 @@
 package au.csiro.cmar.weru;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -104,74 +100,32 @@ public class SDBExperiment extends SDBObject {
   public void addNode(SDBNode node) {
     this.nodes.put(node.getName(), node);
   }
-  
-  public SDBNode createNode(String host, String cookie, String name, String eid, String description, URI website, URI picture, int public_access) throws SDBException {
+
+  public SDBNode createNode(String name, String eid, String description, URI website, URI picture, int public_access) throws SDBException {
     SDBNode node;
-    String content;
 
     if (this.nodes.containsKey(name))
       throw new SDBException("Node with name " + name + " already exists for experiment " + this.getName());
-
-    try {
-      URL url = new URL(host + "/nodes");
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setRequestMethod("POST");
-      conn.setDoOutput(true);
-      conn.setUseCaches(false);
-      conn.setRequestProperty("Content-Type", "application/json");
-      conn.setRequestProperty("Accept", "application/json");
-      conn.setRequestProperty("Cookie", cookie);
-
-      node = new SDBNode();
-      node.setId(null);
-      node.setName(name);
-      node.setExperiment(this);
-      node.setDescription(description);
-      node.setWebsite(website);
-      node.setPicture(picture);
-      node.setPublicAccess(public_access);
-      content = node.toJson();
-
-      conn.setRequestProperty("Content-Length",
-          Integer.toString(content.length()));
-      conn.getOutputStream().write(content.getBytes());
-      conn.getOutputStream().flush();
-
-      if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-
-        throw new SDBException("POST method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage());
-      } else {
-        node = SDBNode.load(conn.getInputStream(), SDBNode.class, this.getContext());
-        this.nodes.put(name, node);
-        return node;
-      }
-    } catch (IOException ex) {
-      throw new SDBException("Unable to access server", ex);
-    } catch (URISyntaxException ex) {
-      throw new SDBException("Unable to parse new node from server", ex);
-    }
+    node = new SDBNode();
+    node.setId(null);
+    node.setName(name);
+    node.setExperiment(this);
+    node.setDescription(description);
+    node.setWebsite(website);
+    node.setPicture(picture);
+    node.setPublicAccess(public_access);
+    node = this.getSession().post("/nodes", node, SDBNode.class, this.getContext());
+    this.nodes.put(name, node);
+    return node;
   }
 
-  public void deleteNode(String host, String cookie, String name) throws SDBException {
+  public void deleteNode(String name) throws SDBException {
     SDBNode node = this.nodes.get(name);
 
     if (node == null)
       throw new SDBException("No node named " + name + " in experiment " + this.getName());
-    try {
-      URL url = new URL(host + "/nodes?nid=" + node.getId());
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setDoInput(true);
-      conn.setDoOutput(true);
-      conn.setRequestMethod("DELETE");
-      conn.setRequestProperty("Cookie", cookie);
-
-      if (conn.getResponseCode() == 200) 
-        this.nodes.remove(node.getId());
-      else 
-        throw new SDBException("DELETE method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage());
-    } catch (IOException ex) {
-      throw new SDBException("Unable to access server to delete node " + name);
-    }
+    this.getSession().delete("/nodes?nid=" + node.getId(), this.getContext());
+    this.nodes.remove(node.getId());
   }
 
   /**
@@ -184,7 +138,7 @@ public class SDBExperiment extends SDBObject {
   public SDBNode getNode(String name) {
     return this.nodes.get(name);
   }	
-  
+
   /**
    * Get the nodes.
    * 

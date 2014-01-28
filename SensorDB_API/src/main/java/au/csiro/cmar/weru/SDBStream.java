@@ -120,7 +120,7 @@ public class SDBStream extends SDBObject {
    * 
    * @throws SDBException if unable to post data to the server
    */
-  public int postData(SDBSession session, Timeseries timeseries) throws SDBException {
+  public int postData(Timeseries timeseries) throws SDBException {
     Iterator<Observation> obs = timeseries.iterator();
     int total = 0;
 
@@ -134,7 +134,7 @@ public class SDBStream extends SDBObject {
         count++;
       }
       update.put(this.getToken(), batch);
-      session.post("/data", update, null, this.getContext());
+      this.getSession().post("/data", update, null, this.getContext());
       total += count;
     }
     return total;
@@ -145,7 +145,6 @@ public class SDBStream extends SDBObject {
    * <p>
    * The data is returned strictly within the start/end date/times, inclusive.
    * 
-   * @param session The session to use
    * @param start The strart date/time
    * @param end The end date/time
    * @param aggregation The aggregation level (if null then raw)
@@ -154,9 +153,9 @@ public class SDBStream extends SDBObject {
    * 
    * @throws SDBException if unable to get the data.
    */
-  public Timeseries getData(SDBSession session, Date start, Date end, String aggregation) throws SDBException {
+  public Timeseries getData(Date start, Date end, String aggregation) throws SDBException {
     DataRequest request = new DataRequest(this, start, end, aggregation);
-    JsonNode response = session.postTree("/data_download", request, this.getContext());
+    JsonNode response = this.getSession().postTree("/data_download", request, this.getContext());
     JsonNode rl = response.get(this.getId());
     Timeseries result;
     
@@ -190,6 +189,10 @@ public class SDBStream extends SDBObject {
     @JsonProperty
     private String aggregation;
     
+    @SuppressWarnings("unused")
+    public DataRequest() {
+    }
+    
     /**
      * Construct a request.
      * 
@@ -197,7 +200,7 @@ public class SDBStream extends SDBObject {
      * @param end The end date
      * @param aggregation The agregation level (or null for raw data)
      */
-    private DataRequest(SDBStream stream, Date start, Date end, String aggregation) {
+    public DataRequest(SDBStream stream, Date start, Date end, String aggregation) {
       super();
       this.stream = stream;
       this.start = start;

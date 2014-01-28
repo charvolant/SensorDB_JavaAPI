@@ -115,7 +115,7 @@ public class SDBSession {
       conn.getOutputStream().write(content.getBytes());
       conn.getOutputStream().flush();
       if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
-        throw new SDBException("POST method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage());
+        throw new SDBException("POST method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage() + " for " + url + " and " + content);
       if (conn.getHeaderField("Set-Cookie") != null)
         this.cookie = conn.getHeaderField("Set-Cookie");
      if (responseClass == null)
@@ -170,7 +170,7 @@ public class SDBSession {
       conn.getOutputStream().write(content.getBytes());
       conn.getOutputStream().flush();
       if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
-        throw new SDBException("POST method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage());
+        throw new SDBException("POST method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage() + " for " + url + " and " + content);
       if (conn.getHeaderField("Set-Cookie") != null)
         this.cookie = conn.getHeaderField("Set-Cookie");
       is = conn.getInputStream();
@@ -223,7 +223,7 @@ public class SDBSession {
         conn.setRequestProperty("Cookie", this.cookie);
       conn.connect();
       if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
-        throw new SDBException("GET method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage());
+        throw new SDBException("GET method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage() + " for " + url);
       if (responseClass == null)
         return null;
       is = conn.getInputStream();
@@ -276,7 +276,7 @@ public class SDBSession {
         conn.setRequestProperty("Cookie", this.cookie);
       conn.connect();
       if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
-        throw new SDBException("GET method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage());
+        throw new SDBException("GET method failed: " + conn.getResponseCode() + "/" + conn.getResponseMessage() + " for " + url);
       if (responseClass == null)
         return null;
       is = conn.getInputStream();

@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -130,11 +129,9 @@ public class SDBStreamTest extends SDBTest {
     Timeseries timeseries;
     Iterator<Observation> i;
     Observation o;
-    SDBSession session = new SDBSession(new URL("http://localhost:" + this.PORT));
 
     this.createServer();
-    session.setCookie(this.COOKIE);
-    timeseries = stream.getData(session, null, null, null);
+    timeseries = stream.getData(null, null, null);
     i = timeseries.iterator();
     assertTrue(i.hasNext());
     o = i.next();
@@ -160,11 +157,9 @@ public class SDBStreamTest extends SDBTest {
     Timeseries timeseries;
     Iterator<Observation> i;
     Observation o;
-    SDBSession session = new SDBSession(new URL("http://localhost:" + this.PORT));
 
     this.createServer();
-    session.setCookie(this.COOKIE);
-    timeseries = stream.getData(session, this.TIMESTAMP2, null, null);
+    timeseries = stream.getData(this.TIMESTAMP2, null, null);
     i = timeseries.iterator();
     assertTrue(i.hasNext());
     o = i.next();
@@ -186,11 +181,9 @@ public class SDBStreamTest extends SDBTest {
     Timeseries timeseries;
     Iterator<Observation> i;
     Observation o;
-    SDBSession session = new SDBSession(new URL("http://localhost:" + this.PORT));
 
     this.createServer();
-    session.setCookie(this.COOKIE);
-    timeseries = stream.getData(session, null, this.TIMESTAMP2, null);
+    timeseries = stream.getData(null, this.TIMESTAMP2, null);
     i = timeseries.iterator();
     assertTrue(i.hasNext());
     o = i.next();
@@ -210,15 +203,13 @@ public class SDBStreamTest extends SDBTest {
   public void testPostData1() throws Exception {
     SDBStream stream = SDBStream.load(this.getClass().getResource("stream1.json"), SDBStream.class, this.context);
     Timeseries timeseries = new Timeseries();
-    SDBSession session = new SDBSession(new URL("http://localhost:" + this.PORT));
     int count;
     
     this.createServer();
-    session.setCookie(this.COOKIE);
     timeseries.add(new Observation(this.TIMESTAMP1, this.VALUE1));
     timeseries.add(new Observation(this.TIMESTAMP2, this.VALUE2));
     timeseries.add(new Observation(this.TIMESTAMP3, this.VALUE3));
-    count = stream.postData(session, timeseries);
+    count = stream.postData(timeseries);
     assertEquals(3, count);
   }
 

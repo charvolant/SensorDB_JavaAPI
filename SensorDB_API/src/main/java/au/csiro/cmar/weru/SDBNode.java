@@ -182,7 +182,7 @@ public class SDBNode extends SDBObject {
    * 
    * @throws SDBException If unable to create the stream
    */
-  public SDBStream createStream(SDBSession session, String name, SDBMeasurement measurement, String description, URI website, URI picture) throws SDBException {
+  public SDBStream createStream(String name, SDBMeasurement measurement, String description, URI website, URI picture) throws SDBException {
     SDBStream stream;
 
     if (this.streams.containsKey(name))
@@ -195,7 +195,7 @@ public class SDBNode extends SDBObject {
     stream.setDescription(description);
     stream.setWebsite(website);
     stream.setPicture(picture);
-    stream = session.post("/streams", stream, SDBStream.class, this.getContext());
+    stream = this.getSession().post("/streams", stream, SDBStream.class, this.getContext());
     this.addStream(stream);
     return stream;
   }
@@ -209,12 +209,12 @@ public class SDBNode extends SDBObject {
    * 
    * @throws SDBException if unable to delete the stream
    */
-  public void deleteStream(SDBSession session, String name) throws SDBException {
+  public void deleteStream(String name) throws SDBException {
     SDBStream stream = this.streams.get(name);
 
     if (stream == null)
       throw new SDBException("No stream with name " + name);
-    session.delete("/streams?sid=" + stream.getId(), this.getContext());
+    this.getSession().delete("/streams?sid=" + stream.getId(), this.getContext());
     this.streams.remove(name);
   }
 

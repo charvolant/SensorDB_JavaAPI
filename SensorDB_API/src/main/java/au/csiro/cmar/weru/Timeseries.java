@@ -7,10 +7,20 @@
  */
 package au.csiro.cmar.weru;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+
+import au.com.bytecode.opencsv.CSVParser;
+import au.com.bytecode.opencsv.CSVReader;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,6 +34,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class Timeseries extends JSONSerialisable implements Iterable<Observation> {
+  private static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+  
   /** The timeseries entries. Implemented as a sorted array */
   @JsonProperty
   private ArrayList<Observation> timeseries;
@@ -45,6 +57,85 @@ public class Timeseries extends JSONSerialisable implements Iterable<Observation
   }
   
   /**
+   * Construct a timeseries from a CSV file.
+   * 
+   * @param source The source file
+   * @param timestampColumn The column (counting from 0) that holds the timestamp
+   * @param valueColumn The column (counting from 0) that holds the value
+   * @param headers The number of header lines
+   */
+  public Timeseries(File source, int timestampColumn, int valueColumn, int headers) throws SDBException {
+    try {
+      FileReader reader = new FileReader(source);
+      
+      this.buildFromCSV(reader, timestampColumn, valueColumn, headers);
+      reader.close();
+    } catch (NumberFormatException | IOException ex) {
+      throw new SDBException("Unable to read timeseries from " + source, ex);
+    }
+  }
+  
+  /**
+   * Construct a timeseries from a CSV stream.
+   * <p>
+   * Timestamps can either be in ISO8601 format or milliseconds
+   * since 1970-01-01T00:00:00 format.
+   * 
+   * @param reader The source reader
+   * @param timestampColumn The column that holds the timestamp
+   * @param valueColumn The column that holds the value
+   * @param headers The number of header lines
+   * 
+   * @throws SDBException if unable to build the timeseries
+   */
+  public Timeseries(Reader reader, int timestampColumn, int valueColumn, int headers) throws SDBException {
+    try {
+      this.buildFromCSV(reader, timestampColumn, valueColumn, headers);
+    } catch (NumberFormatException | IOException ex) {
+      throw new SDBException("Unable to read timeseries", ex);
+    }
+  }
+  
+  /**
+   * Build a timeseries from a CSV source.
+   * 
+   * @throws IOException, NumberFormatException 
+   */
+  private void buildFromCSV(Reader reader, int timestampColumn, int valueColumn, int headers) throws IOException, NumberFormatException {
+    CSVReader csv = new CSVReader(reader);
+    String[] line;
+    Date ts;
+    double v;
+    
+    try {
+    while (headers-- > 0)
+      csv.readNext();
+    this.timeseries = new ArrayList<Observation>(128);
+    while ((line = csv.readNext()) != null) {
+      try {
+        ts = this.TIMESTAMP_FORMAT.parse(line[timestampColumn]);
+      } catch (ParseException ex) {
+        ts = new Date(Long.parseLong(line[timestampColumn]));
+      }
+      v = Double.parseDouble(line[valueColumn]);
+      this.add(new Observation(ts, v));
+    }
+    } finally {
+      csv.close();
+    }
+    
+  }
+  
+  /**
+   * Get the size of the timeseries.
+   * 
+   * @return The size
+   */
+  public int size() {
+    return this.timeseries.size();
+  }
+
+  /**
    * Get the earliest timestamp in the timeseries.
    * 
    * @return The start time, or null if empty
@@ -60,6 +151,22 @@ public class Timeseries extends JSONSerialisable implements Iterable<Observation
    */
   public Date getEnd() {
     return this.timeseries.isEmpty() ? null : this.timeseries.get(this.timeseries.size() - 1).getTimestamp();
+  }
+  
+  /**
+   * Get an observation indexed by timestamp.
+   * <p>
+   * TODO Inefficient implementation. Creates a finder for each call.
+   * 
+   * @param timestamp The timestamp
+   * 
+   * @return The matching observation, or null for none
+   */
+  public Observation get(Date timestamp) {
+    Observation finder = new Observation(timestamp, 0.0);
+    int index = Collections.binarySearch(this.timeseries, finder);
+    
+    return index < 0 ? null : this.timeseries.get(index);
   }
   
   /**
@@ -88,7 +195,9 @@ public class Timeseries extends JSONSerialisable implements Iterable<Observation
 
   /**
    * Create an iterator for the timeseries.
-   * @return
+   * 
+   * @return An iterator across the series
+   * 
    * @see java.lang.Iterable#iterator()
    */
   @Override

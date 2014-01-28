@@ -89,6 +89,19 @@ abstract public class SDBObject extends JSONSerialisable {
   public void setContext(SDBContext context) {
     this.context = context;
   }
+  
+  /**
+   * Get the session associated with the object.
+   * <p>
+   * Derived from the associated context
+   * 
+   * @return The session, or null for no session
+   * 
+   * @see SDBContext#getSession()
+   */
+  public SDBSession getSession() {
+    return this.getContext() == null ? null : this.getContext().getSession();
+  }
 
   /**
    * Get the id.

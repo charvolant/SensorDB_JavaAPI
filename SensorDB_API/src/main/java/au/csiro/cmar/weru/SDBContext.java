@@ -18,7 +18,6 @@ package au.csiro.cmar.weru;
  *
  */
 public interface SDBContext {
-
   /**
    * Find an existing id -> sensordb object binding.
    * 
@@ -27,4 +26,11 @@ public interface SDBContext {
    * @return A matching bound obejct that sensordb already knows about or null for not found
    */
   public SDBObject findBinding(Object id);
+  
+  /**
+   * Get the session that this object is associated with.
+   * 
+   * @return The associated session
+   */
+  public SDBSession getSession();
 }

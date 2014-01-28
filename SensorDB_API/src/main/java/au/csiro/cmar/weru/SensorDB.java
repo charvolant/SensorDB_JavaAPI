@@ -80,6 +80,16 @@ public class SensorDB implements SDBContext {
     this.session.setUser(null);
   }
 
+  /**
+   * Get the session.
+   *
+   * @return the session
+   */
+  @Override
+  public SDBSession getSession() {
+    return this.session;
+  }
+
   public SDBUser createUser(String username, String password, String email, String description, URI website, URI picture) throws SDBException {
     SDBUser user = new SDBUser();
 
@@ -89,7 +99,7 @@ public class SensorDB implements SDBContext {
     user.setDescription(description);
     user.setWebsite(website);
     user.setPicture(picture);
-    user = this.session.post("/register", user, SDBUser.class, this);
+    user = this.getSession().post("/register", user, SDBUser.class, this);
     this.users.put(user.getName(), user);
     this.objectsById.put(user.getId(), user);
     return user;
@@ -99,7 +109,7 @@ public class SensorDB implements SDBContext {
       throws SDBException {
     Login login = new Login(username, password);
 
-    this.session.post("/remove", login, null, this);
+    this.getSession().post("/remove", login, null, this);
     this.users.remove(username);
   }
 
@@ -126,12 +136,32 @@ public class SensorDB implements SDBContext {
     return Collections.unmodifiableCollection(this.users.values());
   }
 
-  // TO BE IMPLEMENTED IN SERVER
+  /**
+   * Create a new measurement.
+   * <p>
+   * TODO Not yet implemented in server. Throws an exception if called.
+   * 
+   * @param name The measurement name
+   * @param description The measurement description
+   * @param website The measurement website
+   * 
+   * @return The new measurement
+   * 
+   * @throws SDBException if unable to create the measurement
+   */
   public SDBMeasurement createMeasurement(String name, String description, String website) throws SDBException {
     throw new SDBException("Not yet implemented");
   }
 
-  // TO BE IMPLEMENTED IN SERVER
+  /**
+   * Delete a measurement.
+   * <p>
+   * TODO Not yet implemented in server. Throws an exception if called.
+   * 
+   * @param name The measurement name
+   * 
+   * @throws SDBException if unable to delete the measurement
+   */
   public void deleteMeasurement(String name) throws SDBException {
     throw new SDBException("Not yet implemented");
   }
@@ -185,7 +215,7 @@ public class SensorDB implements SDBContext {
     experiment.setWebsite(website);
     experiment.setPicture(picture);
     experiment.setAccessRestriction(publicAaccess);
-    experiment = this.session.post("/experiments", experiment, SDBExperiment.class, this);
+    experiment = this.getSession().post("/experiments", experiment, SDBExperiment.class, this);
     this.experiments.put(experiment.getName(), experiment);
     this.objectsById.put(experiment.getId(), experiment);
     return experiment;
@@ -196,7 +226,7 @@ public class SensorDB implements SDBContext {
     if (experiment == null)
       throw new SDBException("No experiment named " + name);
 
-    this.session.delete("/experiments?eid=" + experiment.getId(), this);
+    this.getSession().delete("/experiments?eid=" + experiment.getId(), this);
   }
 
   /**
@@ -219,6 +249,14 @@ public class SensorDB implements SDBContext {
     return Collections.unmodifiableCollection(this.experiments.values());
   }
 
+  /**
+   * Assemble the experiment &gt; node &gt; stream structure from a login response.
+   * <p>
+   * The login response contains lists of items, this method puts things
+   * in their correct places.
+   * 
+   * @param data The login response
+   */
   private void populateSensorDB(LoginResponse data) {
     SDBUser user = this.getUser(data.user.getName());
 
@@ -246,8 +284,17 @@ public class SensorDB implements SDBContext {
     }
   }
 
+  /**
+   * Get a list of all users.
+   * <p>
+   * This method can be called by an unlogged-in connection.
+  * 
+   * @return The users
+   * 
+   * @throws SDBException if unable to contact the server.
+   */
   public void retrieveUsers() throws SDBException {
-    List<SDBUser> newUsers = this.session.getList("/users", SDBUser.class, this);
+    List<SDBUser> newUsers = this.getSession().getList("/users", SDBUser.class, this);
 
     for (SDBUser user: newUsers) {
       SDBUser old = this.users.get(user.getName());
@@ -266,6 +313,15 @@ public class SensorDB implements SDBContext {
     }
   }
 
+  /**
+   * Get a list of all measurements.
+   * <p>
+   * This method can be called by an unlogged-in connection.
+   * 
+   * @return The measurements
+   * 
+   * @throws SDBException if unable to contact the server.
+   */
   public void retrieveMeasurements() throws SDBException {
     List<SDBMeasurement> newMeasurements = this.session.getList("/measurements", SDBMeasurement.class, this);
 
