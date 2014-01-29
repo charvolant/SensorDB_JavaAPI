@@ -38,6 +38,16 @@ public class Metadata extends JSONSerialisable {
   @JsonSerialize(using = SDBDateSerializer.class)
   @JsonDeserialize(using = SDBDateDeserializer.class)
   private Date updatedAt;
+  /** The first date this metadata applies */
+  @JsonProperty("start-ts")
+  @JsonSerialize(using = SDBDateSerializer.class)
+  @JsonDeserialize(using = SDBDateDeserializer.class)
+  private Date start;
+  /** The last date this metadata applies */
+  @JsonProperty("end-ts")
+  @JsonSerialize(using = SDBDateSerializer.class)
+  @JsonDeserialize(using = SDBDateDeserializer.class)
+  private Date end;
   
   /**
    * Construct an empty metadata entry.
@@ -109,6 +119,42 @@ public class Metadata extends JSONSerialisable {
    */
   public void setUpdatedAt(Date updatedAt) {
     this.updatedAt = updatedAt;
+  }
+
+  /**
+   * Get the start date of applicability.
+   *
+   * @return the start date/time
+   */
+  public Date getStart() {
+    return this.start;
+  }
+
+  /**
+   * Set the start date of applicability.
+   *
+   * @param start the new start
+   */
+  public void setStart(Date start) {
+    this.start = start;
+  }
+
+  /**
+   * Get the end date of applicability.
+   *
+   * @return the end date/time
+   */
+  public Date getEnd() {
+    return this.end;
+  }
+
+  /**
+   * Set the end date of applicability.
+   *
+   * @param end the new end
+   */
+  public void setEnd(Date end) {
+    this.end = end;
   }
 
   /**

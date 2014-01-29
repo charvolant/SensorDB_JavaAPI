@@ -39,7 +39,7 @@ public class SensorDBTest extends SDBTest {
    */
   @Test
   public void testSensorDBString() throws Exception {
-    SensorDB sdb = new SensorDB(new URL("http://localhost:" + this.PORT));
+    SensorDB sdb = new SensorDB(new URL(this.HOST1));
 
     assertNotNull(sdb.getUser("fieldprime_test"));
     assertNotNull(sdb.getMeasurement("Celsius"));
@@ -50,8 +50,21 @@ public class SensorDBTest extends SDBTest {
    * Test method for {@link au.csiro.cmar.weru.SensorDB#SensorDB(java.lang.String, java.lang.String, java.lang.String)}.
    */
   @Test
-  public void testSensorDBStringStringString() throws Exception {
-    SensorDB sdb = new SensorDB(new URL("http://localhost:" + this.PORT), "fieldprime_test", "fieldprime_test");
+  public void testSensorDBStringStringString1() throws Exception {
+    SensorDB sdb = new SensorDB(new URL(this.HOST1), "fieldprime_test", "fieldprime_test");
+
+    assertNotNull(sdb.getUser("fieldprime_test"));
+    assertNotNull(sdb.getMeasurement("Celsius"));
+    assertNotNull(sdb.getMeasurement("Practical Salinity Unit (PSU)"));
+    assertNotNull(sdb.getExperiment("Test1"));
+  }
+
+  /**
+   * Test method for {@link au.csiro.cmar.weru.SensorDB#SensorDB(java.lang.String, java.lang.String, java.lang.String)}.
+   */
+  @Test
+  public void testSensorDBStringStringString2() throws Exception {
+    SensorDB sdb = new SensorDB(new URL(this.HOST1), "fieldprime_test", "");
 
     assertNotNull(sdb.getUser("fieldprime_test"));
     assertNotNull(sdb.getMeasurement("Celsius"));
@@ -64,7 +77,7 @@ public class SensorDBTest extends SDBTest {
    */
   @Test
   public void testLogout() throws Exception {
-    SensorDB sdb = new SensorDB(new URL("http://localhost:" + this.PORT), "fieldprime_test", "fieldprime_test");
+    SensorDB sdb = new SensorDB(new URL(this.HOST1), "fieldprime_test", "fieldprime_test");
 
     sdb.logout();
   }
@@ -90,7 +103,7 @@ public class SensorDBTest extends SDBTest {
    */
   @Test
   public void testGetUser() throws Exception {
-    SensorDB sdb = new SensorDB(new URL("http://localhost:" + this.PORT), "fieldprime_test", "fieldprime_test");
+    SensorDB sdb = new SensorDB(new URL(this.HOST1), "fieldprime_test", "fieldprime_test");
     SDBUser user = sdb.getUser(this.USER1);
     
     assertNotNull(user);
@@ -103,7 +116,7 @@ public class SensorDBTest extends SDBTest {
    */
   @Test
   public void testCreateMeasurement() throws Exception {
-    SensorDB sdb = new SensorDB(new URL("http://localhost:" + this.PORT), "fieldprime_test", "fieldprime_test");
+    SensorDB sdb = new SensorDB(new URL(this.HOST1), "fieldprime_test", "fieldprime_test");
 
     try {
       sdb.createMeasurement("Fee", "Fie", "Foe");
@@ -117,7 +130,7 @@ public class SensorDBTest extends SDBTest {
    */
   @Test
   public void testDeleteMeasurement() throws Exception {
-    SensorDB sdb = new SensorDB(new URL("http://localhost:" + this.PORT), "fieldprime_test", "fieldprime_test");
+    SensorDB sdb = new SensorDB(new URL(this.HOST1), "fieldprime_test", "fieldprime_test");
 
     try {
       sdb.deleteMeasurement("Celsius");
@@ -131,7 +144,7 @@ public class SensorDBTest extends SDBTest {
    */
   @Test
   public void testGetMeasurement() throws Exception {
-    SensorDB sdb = new SensorDB(new URL("http://localhost:" + this.PORT), "fieldprime_test", "fieldprime_test");
+    SensorDB sdb = new SensorDB(new URL(this.HOST1), "fieldprime_test", "fieldprime_test");
     SDBMeasurement measurement = sdb.getMeasurement("Celsius");
     
     assertNotNull(measurement);
@@ -160,7 +173,7 @@ public class SensorDBTest extends SDBTest {
    */
   @Test
   public void testGetExperiment() throws Exception {
-    SensorDB sdb = new SensorDB(new URL("http://localhost:" + this.PORT), "fieldprime_test", "fieldprime_test");
+    SensorDB sdb = new SensorDB(new URL(this.HOST1), "fieldprime_test", "fieldprime_test");
     SDBExperiment experiment = sdb.getExperiment(this.EXPERIMENT1);
     
     assertNotNull(experiment);

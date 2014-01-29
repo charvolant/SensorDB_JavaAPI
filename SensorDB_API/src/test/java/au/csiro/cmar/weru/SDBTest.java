@@ -13,6 +13,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.junit.Assert.fail;
 
 import java.io.InputStreamReader;
@@ -97,6 +98,12 @@ public class SDBTest {
         .willReturn(aResponse()
             .withStatus(200)
             .withHeader("Set-Cookie", this.COOKIE)
+            .withBody(this.loadResource("login1.json"))
+            )
+        );
+    stubFor(get(urlMatching("/session.*"))
+        .willReturn(aResponse()
+            .withStatus(200)
             .withBody(this.loadResource("login1.json"))
             )
         );

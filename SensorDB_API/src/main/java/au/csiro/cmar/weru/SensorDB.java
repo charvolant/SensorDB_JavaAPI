@@ -1,7 +1,9 @@
 package au.csiro.cmar.weru;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,11 +49,14 @@ public class SensorDB implements SDBContext {
    * 
    * @param host The host URL
    * @param user The user name
-   * @param password The password
-   * @throws SDBException
+   * @param password The password (null or empty for a user with no password)
+   * 
+   * @throws SDBException if unable to access the server
    */
   protected SensorDB(URL host, String user, String password)
       throws SDBException {
+    LoginResponse login;
+    
     this.session = new SDBSession(host);
     this.users = new HashMap<String, SDBUser>(); 
     this.measurements = new HashMap<String, SDBMeasurement>(); 
@@ -59,11 +64,27 @@ public class SensorDB implements SDBContext {
     this.objectsById = new HashMap<Object, SDBObject>();
     this.retrieveUsers();
     this.retrieveMeasurements();
-    LoginResponse login = this.login(user, password);
+    
+    if (password == null || password.isEmpty())
+      login = this.session(user);
+    else
+      login = this.login(user, password);
     this.populateSensorDB(login);
 
   }
 
+  /**
+   * Login to sensordb.
+   * 
+   * @param user The user name
+   * @param password The user password
+   * 
+   * @return The login response
+   * 
+   * @throws SDBException if unable to login
+   * 
+   * @see #session(String)
+   */
   private LoginResponse login(String user, String password) throws SDBException {
     Login login = new Login(user, password);
     SDBUser existing = this.getUser(user);
@@ -74,6 +95,33 @@ public class SensorDB implements SDBContext {
     return this.session.post("/login", login, LoginResponse.class, this);
   }
 
+  /**
+   * Get a session for a user with no password.
+   * 
+   * @param user The user name
+   * 
+   * @return The login response
+   * 
+   * @throws SDBException if unable to get the session
+   */
+  private LoginResponse session(String user) throws SDBException {
+    SDBUser existing = this.getUser(user);
+    // Ugh! Disgusting hack to make sure Jackson can re-bind the object
+    // I feel ashamed
+    this.users.remove(user);
+    this.objectsById.remove(existing.getId());
+    try {
+      return this.session.get("/session?user=" + URLEncoder.encode(user, "UTF-8"), LoginResponse.class, this);
+    } catch (UnsupportedEncodingException ex) {
+      throw new SDBException("Unable to encode " + user, ex);
+    }
+  }
+
+  /**
+   * Logout for the current session.
+   * 
+   * @throws SDBException if unable to logout
+   */
   public void logout() throws SDBException {
     this.session.post("/logout", null, null, this);
     this.session.setCookie(null);
