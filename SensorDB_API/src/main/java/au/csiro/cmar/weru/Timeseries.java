@@ -8,7 +8,6 @@
 package au.csiro.cmar.weru;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -19,7 +18,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 
-import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

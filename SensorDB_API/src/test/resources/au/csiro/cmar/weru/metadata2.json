@@ -1,0 +1,7 @@
+{
+  "name" : "name1",
+  "value" : "value1",
+  "updated_at" : 10000000,
+  "start-ts" : 10000200,
+  "end-ts" : 10000300
+}

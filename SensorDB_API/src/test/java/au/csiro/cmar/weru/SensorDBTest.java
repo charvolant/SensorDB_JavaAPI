@@ -10,8 +10,9 @@ package au.csiro.cmar.weru;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertSame;
 
+import java.net.URI;
 import java.net.URL;
 
 import org.junit.Before;
@@ -117,12 +118,12 @@ public class SensorDBTest extends SDBTest {
   @Test
   public void testCreateMeasurement() throws Exception {
     SensorDB sdb = new SensorDB(new URL(this.HOST1), "fieldprime_test", "fieldprime_test");
-
-    try {
-      sdb.createMeasurement("Fee", "Fie", "Foe");
-      fail("Expecting SBDException");
-    } catch (SDBException ex) {
-    }
+    SDBMeasurement measurement;
+    
+    measurement = sdb.createMeasurement("Fee", "Fie", URI.create(this.WEBSITE1));
+    assertNotNull(sdb.getMeasurement("Fee"));
+    assertSame(measurement, sdb.getMeasurement("Fee"));
+    assertEquals("Fie", measurement.getDescription());
   }
 
   /**
@@ -132,12 +133,9 @@ public class SensorDBTest extends SDBTest {
   public void testDeleteMeasurement() throws Exception {
     SensorDB sdb = new SensorDB(new URL(this.HOST1), "fieldprime_test", "fieldprime_test");
 
-    try {
-      sdb.deleteMeasurement("Celsius");
-      fail("Expecting SBDException");
-    } catch (SDBException ex) {
-    }
-  }
+    sdb.deleteMeasurement("Celsius");
+    assertNull(sdb.getMeasurement("Celsius"));
+   }
 
   /**
    * Test method for {@link au.csiro.cmar.weru.SensorDB#getMeasurementId(java.lang.String)}.

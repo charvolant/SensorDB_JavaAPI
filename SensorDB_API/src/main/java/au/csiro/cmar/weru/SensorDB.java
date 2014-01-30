@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,7 +188,7 @@ public class SensorDB implements SDBContext {
   /**
    * Create a new measurement.
    * <p>
-   * TODO Not yet implemented in server. Throws an exception if called.
+   * TODO Not yet implemented in server. New measurements are created locally but not pushed to the server.
    * 
    * @param name The measurement name
    * @param description The measurement description
@@ -197,21 +198,32 @@ public class SensorDB implements SDBContext {
    * 
    * @throws SDBException if unable to create the measurement
    */
-  public SDBMeasurement createMeasurement(String name, String description, String website) throws SDBException {
-    throw new SDBException("Not yet implemented");
+  public SDBMeasurement createMeasurement(String name, String description, URI website) throws SDBException {
+    SDBMeasurement measurement = new SDBMeasurement();
+    
+    if (this.measurements.containsKey(name))
+      throw new SDBException("Measurement " + name + " already exists.");
+    measurement.setContext(this);
+    measurement.setCreatedAt(new Date());
+    measurement.setDescription(description);
+    measurement.setName(name);
+    measurement.setWebsite(website);
+    this.measurements.put(name, measurement);
+    return measurement;
   }
 
   /**
    * Delete a measurement.
    * <p>
-   * TODO Not yet implemented in server. Throws an exception if called.
+   * TODO Not yet implemented in server. Deletes a measurement locally only,
    * 
    * @param name The measurement name
    * 
    * @throws SDBException if unable to delete the measurement
    */
   public void deleteMeasurement(String name) throws SDBException {
-    throw new SDBException("Not yet implemented");
+    if (this.measurements.remove(name) == null)
+      throw new SDBException("No measurement " + name);
   }
 
   /**
